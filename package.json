@@ -1,0 +1,31 @@
+{
+  "name": "react-portfolio",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "next",
+    "build": "next build",
+    "start": " next start",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Vithursan6/react-portfolio.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Vithursan6/react-portfolio/issues"
+  },
+  "homepage": "https://github.com/Vithursan6/react-portfolio#readme",
+  "dependencies": {
+    "bootstrap": "^4.4.1",
+    "next": "^12.3.1",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "sass": "^1.54.9",
+    "webpack": "^5.74.0"
+  }
+}
