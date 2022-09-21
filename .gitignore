@@ -39,7 +39,12 @@ build/Release
 
 # Dependency directories
 node_modules/
+/.pnp
+.pnp.js
 jspm_packages/
+
+# testing
+/coverage
 
 # TypeScript v1 declaration files
 typings/
@@ -53,11 +58,18 @@ typings/
 # Optional eslint cache
 .eslintcache
 
+# Production
+/build
+
 # Microbundle cache
 .rpt2_cache/
 .rts2_cache_cjs/
 .rts2_cache_es/
 .rts2_cache_umd/
+
+# Misc
+.DS_store
+.env*
 
 # Optional REPL history
 .node_repl_history
