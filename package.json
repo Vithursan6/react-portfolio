@@ -21,6 +21,7 @@
   },
   "homepage": "https://github.com/Vithursan6/react-portfolio#readme",
   "dependencies": {
+    "apollo-server-express": "^2.10.1",
     "axios": "^1.1.2",
     "bootstrap": "^4.4.1",
     "express": "^4.18.1",

@@ -1,7 +1,7 @@
 const express = require('express')
 const next = require('next')
-const graphqlHTTP = require('express-graphql');
-const { buildSchema } = require('graphql');
+
+const { ApolloServer, gql } = require('apollo-server-express');
 
 const port = parseInt(process.env.PORT, 10) || 3000
 const dev = process.env.NODE_ENV !== 'production'
@@ -9,7 +9,7 @@ const app = next({ dev })
 const handle = app.getRequestHandler()
 
 //resolvers
-const { projectResolvers } = require('./graphql/resolvers');
+const { projectQueries, projectMutations } = require('./graphql/resolvers');
 //types
 const { projectTypes } = require('./graphql/types');
 
@@ -17,7 +17,7 @@ app.prepare().then(() => {
   const server = express()
 
 
-  const schema = buildSchema(`
+  const typeDefs = gql`
     ${projectTypes}
 
       type Query {
@@ -26,17 +26,26 @@ app.prepare().then(() => {
         projects: [Project]
       }
 
-  `);
+      type Mutation {
+        createProject(input: ProjectInput): Project
+        updateProject(id: ID, input: ProjectInput): Project
+        deleteProject(id: ID): ID
+      }
 
-  const root = {
-    ...projectResolvers
+  `;
+
+  const resolvers = {
+    Query: {
+      ...projectQueries
+    },
+    Mutation: {
+      ...projectMutations
+    }
   }
 
-  server.use('/graphql', graphqlHTTP({
-    schema,
-    rootValue: root,
-    graphiql: true
-  }))
+  const apolloServer =  new ApolloServer({typeDefs, resolvers})
+  apolloServer.applyMiddleware({app: server})
+
 
   server.all('*', (req, res) => {
     return handle(req, res)
