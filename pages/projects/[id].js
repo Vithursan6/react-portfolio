@@ -1,24 +1,14 @@
 import React from "react";
-import axios from "axios";
+import { useQuery } from "@apollo/react-hooks";
+import { GET_PROJECT } from "@/apollo/queries";
 
-const fetchProjectById = (id) => {
-    const query = `
-        query Project($id: ID) {
-            project (id: $id) { 
-                _id,
-                title, 
-                description, 
-                technologies, 
-                url 
-        }
-}`;
-    const variables = { id };
-    return axios.post('http://localhost:3000/graphql', { query, variables })
-        .then(({data: graph}) =>  graph.data)
-        .then(data => data.project)
-}
+const ProjectDetail = ({query}) => {
 
-const ProjectDetail = ({project}) => {
+    const { loading, error, data } = useQuery(GET_PROJECT, {variables: { id: query.id }});
+
+    if (loading) { return 'Loading...'};
+
+    const project = data && data.project || {};
 
     return (
             <div className="portfolio-detail">
@@ -61,8 +51,7 @@ const ProjectDetail = ({project}) => {
 }
 
 ProjectDetail.getInitialProps = async ({query}) => {
-    const project = await fetchProjectById(query.id);
-    return {project};
+    return {query};
 }
 
 
