@@ -1,95 +1,16 @@
-import { useState } from "react";
-import axios from "axios"
 import ProjectCard from "../../components/projects/ProjectCard";
 import Link from 'next/link';
+import { useGetProject, useCreateProject, useDeleteProject, useUpdateProject } from "@/apollo/actions";
+import withApollo from "../../hoc/withApollo";
+import { getDataFromTree } from '@apollo/react-ssr';
 
+const Projects = () =>  {
+    const { data } = useGetProject();
+    const [updateProject] = useUpdateProject();
+    const [deleteProject] = useDeleteProject();
+    const [createProject] = useCreateProject();
 
-const removeProject = (id) => {
-    const query = `
-        mutation DeleteProject {
-            deleteProject(id: "${id}")
-        }
-    `;
-    return axios.post('http://localhost:3000/graphql', { query })
-    .then(({data: graph}) =>  graph.data)
-    .then(data => data.removeProject)
-}
-
-const putProject = (id) => {
-    const query = `mutation UpdateProject {
-        updateProject(id: "${id}",input: {
-              title: "update test app",
-              description: "update test app",
-              technologies: "html, css, javascript, virtual DOM",
-              url: "https://vithursan6.github.io/updatednewTestApp/",
-              isCurrentlyDeployed: true
-        }) {
-          _id
-          title
-          description
-          technologies
-          url
-        }
-      }`;
-    return axios.post('http://localhost:3000/graphql', { query })
-        .then(({data: graph}) =>  graph.data)
-        .then(data => data.updateProject)
-}
-
-const addProject = () => {
-    const query = `mutation CreateProject {
-        createProject(input: {
-              title: "new test app",
-              description: "new test app",
-              technologies: "html, css, javascript, virtual DOM",
-              url: "https://vithursan6.github.io/newTestApp/",
-              isCurrentlyDeployed: false
-        }) {
-          _id
-          title
-          description
-          technologies
-          url
-        }
-      }`;
-    return axios.post('http://localhost:3000/graphql', { query })
-        .then(({data: graph}) =>  graph.data)
-        .then(data => data.createProject)
-}
-
-const fetchProjects = () => {
-    const query = `query Projects {projects { _id, title, description, technologies, url }}`;
-    return axios.post('http://localhost:3000/graphql', { query })
-        .then(({data: graph}) =>  graph.data)
-        .then(data => data.projects)
-}
-
-const Projects = ({data}) =>  {
-    const [projects, setProjects] = useState(data.projects);
-
-    const createProject = async () => {
-        const newProject = await addProject();
-        const newProjects = [...projects, newProject];
-        setProjects(newProjects);
-    }
-
-    const updateProject = async (id) => {
-        const updatedProject = await putProject(id);
-        const index = projects.findIndex(p => p._id === id);
-        const newProjects = projects.slice();
-        newProjects[index] = updatedProject;
-        setProjects(newProjects);
-    }
-
-    const deleteProject = async (id) => {
-        const deletedId = await removeProject(id);
-        const index = projects.findIndex(p => p._id === id);
-        const newProjects = projects.slice();
-        newProjects.splice(index, 1);
-        setProjects(newProjects);
-    }
- 
-
+    const projects = data && data.projects || [];
 
     return (
         <>
@@ -117,10 +38,10 @@ const Projects = ({data}) =>  {
                             </Link>
                             <button
                             className="btn btn-warning" 
-                            onClick={() => updateProject(project._id)}>Update Project</button> 
+                            onClick={() => updateProject({variables: {id: project._id}})}>Update Project</button> 
                             <button 
                             className="btn btn-danger"
-                            onClick={() => deleteProject(project._id)}>
+                            onClick={() => deleteProject({variables: {id: project._id}})}>
                             Delete Project
                             </button>                       
                         </div>
@@ -132,10 +53,4 @@ const Projects = ({data}) =>  {
     )
 }
 
-Projects.getInitialProps = async () => {
-
-    const projects = await fetchProjects();
-    return { data: { projects }};
-}
-
-export default Projects;
+export default withApollo(Projects, { getDataFromTree });

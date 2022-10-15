@@ -1,13 +1,12 @@
 import React from "react";
 import { useQuery } from "@apollo/react-hooks";
 import { GET_PROJECT } from "@/apollo/queries";
+import withApollo from "../../hoc/withApollo";
+import { getDataFromTree } from '@apollo/react-ssr';
 
 const ProjectDetail = ({query}) => {
 
-    const { loading, error, data } = useQuery(GET_PROJECT, {variables: { id: query.id }});
-
-    if (loading) { return 'Loading...'};
-
+    const {data, loading, error} = useQuery(GET_PROJECT, {variables: {id: query.id}});
     const project = data && data.project || {};
 
     return (
@@ -55,4 +54,4 @@ ProjectDetail.getInitialProps = async ({query}) => {
 }
 
 
-export default ProjectDetail;
+export default withApollo(ProjectDetail, { getDataFromTree });
