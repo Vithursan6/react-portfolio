@@ -6,7 +6,9 @@ const myDb = require('./myDb');
 
     mongoose.connect(config.DB_URI,  {
         useNewUrlParser: true,
-        useUnifiedTopology: true
+        useUnifiedTopology: true,
+        useFindAndModify: true,
+        useCreateIndex: true
     }, async () => {
         console.log('Initializing DB Population....');
         await myDb.populate();

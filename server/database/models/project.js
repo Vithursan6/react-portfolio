@@ -9,6 +9,7 @@ const projectSchema = new Schema({
     technologies: { type: String, required: true},
     url: { type: String, required: true},
     isCurrentlyDeployed: { type: Boolean, required: false},
+    user: {type: Schema.Types.ObjectId, ref: 'User'},
     createdAt: { type:Date, default: Date.now }
 
 })

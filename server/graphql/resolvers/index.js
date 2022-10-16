@@ -1,5 +1,4 @@
 
-const Project = require('../../database/models/project');
 
 exports.projectQueries = {
       project: (root, {id}, ctx) => {
@@ -12,7 +11,7 @@ exports.projectQueries = {
 
 exports.projectMutations = {
   createProject: async (root, {input}, ctx) => {
-    const createdProject = await Project.create(input);
+    const createdProject = await ctx.models.Project.create(input);
     return createdProject;
   },
   updateProject: async (root, {id, input}, ctx) => {
@@ -24,4 +23,21 @@ exports.projectMutations = {
     return deletedProject._id;
   }
 
+}
+
+exports.userMutations = {
+
+  signUp: async (root, { input }, ctx) => {
+    const registeredUser = await ctx.models.User.signUp(input);
+    return registeredUser._id;
+    
+  },
+  signIn: (root, { input }, ctx) => {
+    return ctx.models.User.signIn(input, ctx);
+
+  },
+  signOut: (root, args, ctx) => {
+    return ctx.models.User.signOut();
+    
+  }
 }
