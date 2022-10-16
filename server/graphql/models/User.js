@@ -7,13 +7,21 @@ class User {
         this.Model = model;
     }
 
-    signUp(signUpData) {
+    async signUp(signUpData) {
         
         if (signUpData.password !== signUpData.passwordConfirmation) {
             throw new Error('Password must match password confirmation input!');
         }
+        try {
+            return await this.Model.create(signUpData);
+        } catch(e) {
+            if (e.code && e.code === 11000) {
+            throw new Error('Email Already Exists!!');
+            }
 
-        return this.Model.create(signUpData);
+            throw e;
+        }
+
     }
 
     async signIn(signInData, ctx) {
@@ -33,8 +41,13 @@ class User {
 
 
 
-    signOut() {
-        return 'Signing Out...'
+    signOut(ctx) {
+        try {
+            ctx.logout();
+            return true;
+        } catch(e) {
+            return false;
+        }
     }
 
 

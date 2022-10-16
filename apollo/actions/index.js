@@ -3,8 +3,9 @@ import {
     GET_PROJECTS,
     PUT_PROJECT,
     DELETE_PROJECT,
-    ADD_PROJECT
-} from '../queries';
+    ADD_PROJECT,
+    SIGN_IN
+} from '../queries'
 
 
 
@@ -34,3 +35,10 @@ export const useCreateProject = () => useMutation(ADD_PROJECT, {
             })
         }
     });
+
+//Auth Actions Start
+
+export const useSignIn = () => useMutation(SIGN_IN)
+
+
+//Auth Action End

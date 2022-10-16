@@ -62,3 +62,46 @@ export const DELETE_PROJECT = gql`
             deleteProject(id: $id)
         }
     `;
+
+//AUTH Queries Start
+
+export const SIGN_UP = gql`
+        mutation SignUp(
+            $avatar: String
+            $email: String!
+            $username: String!
+            $password: String!
+            $passwordConfirmation: String!
+        ) {
+            signUp(input: {
+                avatar: $avatar
+                username: $username
+                email: $email
+                password: $password
+                passwordConfirmation: $passwordConfirmation
+            })
+        }
+`
+
+export const SIGN_IN = gql`
+  mutation SignIn(
+    $email: String!
+    $password: String!
+  ) {
+    signIn(input: {
+      email: $email
+      password: $password
+    }) {
+      _id
+      username
+      role
+      avatar
+    }
+  }
+`
+
+
+
+
+
+//AUTH Queries End
