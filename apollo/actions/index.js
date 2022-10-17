@@ -1,10 +1,12 @@
-import { useQuery, useMutation } from '@apollo/react-hooks';
+import { useQuery, useMutation, useLazyQuery } from '@apollo/react-hooks';
 import { 
     GET_PROJECTS,
     PUT_PROJECT,
     DELETE_PROJECT,
     ADD_PROJECT,
-    SIGN_IN
+    SIGN_IN,
+    SIGN_OUT,
+    GET_USER
 } from '../queries'
 
 
@@ -38,7 +40,19 @@ export const useCreateProject = () => useMutation(ADD_PROJECT, {
 
 //Auth Actions Start
 
-export const useSignIn = () => useMutation(SIGN_IN)
+export const useSignIn = () => useMutation(SIGN_IN, {
+    update(cache, { data: { signIn: signedInUser }}) {
+        cache.writeQuery({
+            query: GET_USER,
+            data: { user: signedInUser }
+        })
+    }
+})
+
+export const useSignOut = () => useMutation(SIGN_OUT)
+
+export const useLazyGetUser = () => useLazyQuery(GET_USER)
+export const useGetUser = () => useQuery(GET_USER)
 
 
 //Auth Action End

@@ -24,13 +24,20 @@ export const GET_PROJECTS = gql`
         }
     }`
 
-export const ADD_PROJECT = gql`mutation CreateProject {
+export const ADD_PROJECT = gql`
+        mutation CreateProject(
+          $title: String ,
+          $description: String,
+          $technologies: String,
+          $url: String,
+          $isCurrentlyDeployed: Boolean
+        ) {
         createProject(input: {
-              title: "new test app",
-              description: "new test app",
-              technologies: "html, css, javascript, virtual DOM",
-              url: "https://vithursan6.github.io/newTestApp/",
-              isCurrentlyDeployed: false
+              title: $title,
+              description: $description,
+              technologies: $technologies,
+              url: $url,
+              isCurrentlyDeployed: $isCurrentlyDeployed
         }) {
           _id
           title
@@ -96,6 +103,17 @@ export const SIGN_IN = gql`
       username
       role
       avatar
+    }
+  }
+`
+export const SIGN_OUT = gql`mutation SignOut{ signOut}`
+
+export const GET_USER = gql`
+  query User{
+    user {
+      _id
+      username
+      role
     }
   }
 `

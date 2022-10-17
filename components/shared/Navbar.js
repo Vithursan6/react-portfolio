@@ -1,5 +1,10 @@
-import { Navbar, Nav } from 'react-bootstrap';
+import { useState, useEffect } from 'react';
+import { Navbar, Nav, NavDropdown } from 'react-bootstrap';
 import Link from 'next/link';
+import withApollo from '../../hoc/withApollo';
+import { useLazyGetUser } from '../../apollo/actions';
+
+
 
 const AppLink = ({children, className, href}) =>
     <Link href={href}>
@@ -10,6 +15,21 @@ const AppLink = ({children, className, href}) =>
 
 
 const AppNavbar = () => {
+
+    const [user, setUser ] = useState(null);
+    const [hasResponse, setHasResponse] = useState(false);
+    const [getUser, {data, error}] = useLazyGetUser();
+
+    useEffect(() => {
+        getUser();
+    }, []);
+
+    if (data) {
+        if (data.user && !user) { setUser(data.user); }
+        if (!data.user && user) { setUser(null); }
+        if (!hasResponse) { setHasResponse(true); }
+        
+    }
 
     return (
         <div className="navbar-wrapper">
@@ -28,14 +48,44 @@ const AppNavbar = () => {
                             Cv 
                         </AppLink>
                     </Nav>
-                    <Nav>
-                        <AppLink href='/register' className='nav-link mr-3 btn btn-primary bg-blue bright'>
-                            Sign Up 
-                        </AppLink>
-                        <AppLink href='/login' className="nav-link mr-3 btn btn-success bg-green-2 bright">
-                            Sign In
-                        </AppLink>
-                    </Nav>
+                    { hasResponse &&
+                        <Nav>
+                            { user && 
+                                <>
+                                    <span className='nav-Link mr-2'>Welcome {user.username}</span>
+                                    <NavDropdown className="mr-2"title="Manage" id="basic-nav-dropdown">
+                                        { (user.role === 'admin') &&
+                                        <AppLink href='/projects/new' className="dropdown-item">
+                                        Add Project
+                                        </AppLink>
+                                        }                                  
+                                    <NavDropdown.Item href="#action/3.2">
+                                        Another action
+                                    </NavDropdown.Item>
+                                    <NavDropdown.Item href="#action/3.3">Something</NavDropdown.Item>
+                                    <NavDropdown.Divider />
+                                    <NavDropdown.Item href="#action/3.4">
+                                        Separated link
+                                    </NavDropdown.Item>
+                                    </NavDropdown>
+                                    <AppLink href='/logout' className='nav-link btn btn-danger'>
+                                     Sign Out 
+                                    </AppLink>
+                                </>
+                            }
+                            { (error || !user) &&
+                                 <>
+                                    <AppLink href='/register' className='nav-link mr-3 btn btn-primary bg-blue bright'>
+                                        Sign Up 
+                                    </AppLink>
+                                    <AppLink href='/login' className="nav-link mr-3 btn btn-success bg-green-2 bright">
+                                        Sign In
+                                    </AppLink>
+                                </>
+                            }
+                           
+                        </Nav>
+                    }
                 </Navbar.Collapse>
             </Navbar>
       </div>
@@ -43,4 +93,4 @@ const AppNavbar = () => {
     )
 }
 
-export default AppNavbar;
+export default withApollo(AppNavbar);
